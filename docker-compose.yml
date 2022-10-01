@@ -3,6 +3,8 @@ version: '2'
 services:
     node:
         build: ./app
+        environment:
+            SEGUNDOS_TIMEOUT: 5
 
     nginx:
         image: nginx:1.23.1
