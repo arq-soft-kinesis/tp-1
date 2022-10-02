@@ -5,9 +5,11 @@ services:
         build: ./app
         environment:
             SEGUNDOS_TIMEOUT: 5
+            PORT: 3000
 
     nginx:
         image: nginx:1.23.1
+        container_name: nginx
         ports:
             - "5555:80"
         volumes:
@@ -48,6 +50,7 @@ services:
 
     bbox:
         image: arqsoft/bbox:202202.1
+        container_name: bbox
         volumes:
             - "./config.properties:/opt/bbox/config.properties:ro"
 
