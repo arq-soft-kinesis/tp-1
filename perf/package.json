@@ -5,13 +5,13 @@
   "main": "index.js",
   "scripts": {
     "artillery": "artillery",
-    "node": "artillery run root.yaml -e node",
+    "node": "artillery run baseline-ping.yaml -e node",
     "scenario": "./run-scenario.sh"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "artillery": "2.0.0-14",
+    "artillery": "^2.0.0-14",
     "artillery-plugin-statsd": "^2.2.1"
   }
 }

@@ -6,8 +6,14 @@ config:
         statsd:
           host: localhost
           port: 8125
-          prefix: "artillery-node"
-
+          prefix: "artillery-bbox"
+    cluster:
+      target: 'http://localhost:5555/node/cluster'
+      plugins:
+        statsd:
+        host: localhost
+        port: 8125
+        prefix: "artillery-bbox"
   pool: 50 # All HTTP requests from all virtual users will be sent over the same connections
 
   phases:
@@ -21,7 +27,11 @@ config:
     
 
 scenarios:
-  - name: Root (/)
+  - name: Bbox0
     flow:
       - get:
-          url: '/'
+          url: '/bbox/0'
+  - name: Bbox1
+    flow:
+      - get:
+          url: '/bbox/1'
