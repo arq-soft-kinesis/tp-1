@@ -21,12 +21,12 @@ config:
       duration: 60
       arrivalRate: 5
     - name: Ramp up
-      duration: 180
+      duration: 120
       arrivalRate: 10
-      rampTo: 100
-    - name: Plain
+      rampTo: 200
+    - name: Ramp Up Load
       duration: 600
-      arrivalRate: 100
+      arrivalRate: 200
 
 scenarios:
   - name: Bbox0
