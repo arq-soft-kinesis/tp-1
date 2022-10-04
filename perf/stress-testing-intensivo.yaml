@@ -1,0 +1,36 @@
+config:
+  environments:
+    node:
+      target: 'http://localhost:5555/node'
+      plugins:
+        statsd:
+          host: localhost
+          port: 8125
+          prefix: "artillery-node"
+    cluster:
+      target: 'http://localhost:5555/node/cluster'
+      plugins:
+        statsd:
+          host: localhost
+          port: 8125
+          prefix: "artillery-node"
+  pool: 50 # All HTTP requests from all virtual users will be sent over the same connections
+
+  phases:
+    - name: Warm up
+      duration: 60
+      arrivalRate: 5
+    - name: Ramp up
+      duration: 120
+      arrivalRate: 10
+      rampTo: 200
+    - name: Ramp Up Load
+      duration: 600
+      arrivalRate: 200
+    
+
+scenarios:
+  - name: Root (/)
+    flow:
+      - get:
+          url: '/intensivo'
