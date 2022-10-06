@@ -18,7 +18,16 @@ app.get("/bbox/:id([0-1])", (req, res) => {
 
     axios.get(`http://nginx:80/bbox${bboxId}`)
         .then(({ status, data }) => res.status(status).send(`[${appId}] ${data}`))
-        .catch(() => res.status(500).send(`[${appId}] algo feo pasó`));
+        .catch((err) => {
+            console.error(err);
+            res.status(500).send(`[${appId}] algo feo pasó`);
+        });
+});
+
+app.get("/async", (req, res) => {
+    setTimeout(() => {
+        res.status(200).send(`[${appId}] async done`);
+    }, TIMEOUT);
 });
 
 app.get("/intensivo", (req, res) => {
