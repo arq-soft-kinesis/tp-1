@@ -121,60 +121,32 @@ Podemos decir entonces que nuestro límite de cargas esta dentro del rango arriv
 Para poder recibir mas requests al mismo tiempo que este limite estimado, vamos a testear el sistema si fuese escalado
 horizontalmente, para ello levantaremos mas replicas del mismo.
 
-#### Escenario 3 - Test de Carga sobre el endpoint Ping - 2 replicas
+#### Escenario 3 - Test de Carga sobre el endpoint Ping - 3 replicas
 
-Comenzaremos levantando una replica extra y someteremos este cluster al mismo test anterior para poder comparar:
+Comenzaremos levantando dos réplicas extra y someteremos este cluster al mismo test anterior para poder comparar:
 
 ***
-    sh run-scenario .\ping\explorative-stress-testing-ping.yml cluster
+    sh run-scenario .\ping\explorative-stress-testing-ping2.yml cluster
 
-Los resu
+Los resultados obtenidos son:
 
+![img.png](img/ping/errores-cluster.png)
 
-Para entender cuanto mejora en nuestro sistema tener réplicas del cluster inicial se realiza la misma prueba hecha 
-anteriormente sobre un cluster de 3 instancias.
+En este caso la cantidad de request que terminan en error es menor (100 menos), pero no significativamente.
+Sin embargo podríamos ver una mejora en el hecho de que el sistema comenzó a fallar mas tardíamente que en el caso anterior,
+lo que significaría una pequeña mejora en el tiempo de disponibilidad del mismo.
 
-El resultado es el siguiente:
+Es interesante ver como tenemos picos constantes de latencia máxima que luego recaen significativamente. Es difícil
+determinar el porqué del mismo exactamente, pero si puede darnos una idea que al revisar el consumo de memoria de uno de
+los nodos, en uno de los momentos máximos de tiempo de demora en responder, el uso de CPU habia llegado casi a su límite:
 
-
-
-
-### Enpoint Intensivo
-
-Para el estudio de la performance del sistema bajo tareas más intensivas, es decir tareas con consumo de CPU alto, 
-creamos pruebas sobre el endpoint *intensivo*
-
-
-#### Un único nodo
-
-Para testear este endpoint habíamos creado una configuración inicial por fases como la siguiente:
-
-([Link a imagen](img/phases-load-testing-intesivo1.png))
-![img1](img/phases-load-testing-intesivo1.png)
-
-La intención de esta configuración era ir escalando gradualmente la cantidad de usuarios virtuales para determinar cual
-sería el límite de carga sobre el cual el sistema comenzaría a fallar. Sin embargo, al ejecutar la prueba comenzamos a
-
-Para ejecutarlo se realiza:
-
-
-
-obtener errores de *ETIMEDOUT* tan solo en la primera fase y con un unico request completado, como se muestra a continuación:
-![img.png](img/error-intensivo-un-solo-nodo-1.png)
-
-
-Por ello se decide probar con cantidades menores por segundo:
+![img_2.png](img/ping/latency-resources-cluster.png)
 
 
 
 
-Como no notamos ninguna mejora, creemos que es mejor opcion escalar horizontalmente nuestra arquitectura, creando replicas
-del sistema y evaluando las mismas pruebas sobre el mismo para comprobar su mejora.
+### Endpoint Intensivo
 
-
-#### Replicas
-
-Ejecutando las mismas pruebas realizadas anteriormente se obienten los siguientes resultados
 
 
 
