@@ -23,10 +23,10 @@ config:
     - name: Ramp up
       duration: 120
       arrivalRate: 10
-      rampTo: 200
+      rampTo: 100
     - name: Ramp Up Load
-      duration: 600
-      arrivalRate: 200
+      duration: 240
+      arrivalRate: 100
     
 
 scenarios:

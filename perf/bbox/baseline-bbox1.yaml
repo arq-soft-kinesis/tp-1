@@ -1,0 +1,29 @@
+config:
+  environments:
+    bbox1:
+      target: 'http://localhost:5555/node'
+      plugins:
+        statsd:
+          host: localhost
+          port: 8125
+          prefix: "artillery-bbox"
+  pool: 50 # All HTTP requests from all virtual users will be sent over the same connections
+
+  phases:
+    - name: Warm up
+      duration: 60
+      arrivalRate: 1
+    - name: Ramp up
+      duration: 120
+      arrivalRate: 5
+      rampTo: 20
+    - name: Plain
+      duration: 180
+      arrivalRate: 2
+
+
+scenarios:
+  - name: Bbox1
+    flow:
+      - get:
+          url: '/bbox/1'
