@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "artillery": "artillery",
-    "node": "artillery run baseline-ping.yaml -e node",
+    "node": "artillery run ping/baseline-ping.yaml -e node",
     "scenario": "./run-scenario.sh"
   },
   "author": "",
