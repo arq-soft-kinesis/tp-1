@@ -2,6 +2,8 @@ config:
   environments:
     node:
       target: 'http://localhost:5555/node'
+      http:
+        timeout: 30
       plugins:
         statsd:
           host: localhost
@@ -13,27 +15,20 @@ config:
         statsd:
           host: localhost
           port: 8125
-          prefix: "artillery-node"
+          prefix: "stress-intensivo-cluster"
   pool: 50 # All HTTP requests from all virtual users will be sent over the same connections
 
   phases:
-    - name: Plain 1
+    - name: Warm up
       duration: 60
+      arrivalRate: 5
+    - name: Ramp up
+      duration: 120
       arrivalRate: 10
-    - name: Ramp up 1
-      duration: 60
-      arrivalRate: 10
-      rampTo: 30
-    - name: Plain 2
-      duration: 120
-      arrivalRate: 30
-    - name: Ramp up 2
-      duration: 120
-      arrivalRate: 30
-      rampTo: 50
-    - name: Plain 3
-      duration: 120
-      arrivalRate: 50
+      rampTo: 200
+    - name: Ramp Up Load
+      duration: 600
+      arrivalRate: 200
     
 
 scenarios:
