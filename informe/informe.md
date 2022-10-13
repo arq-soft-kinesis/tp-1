@@ -239,7 +239,7 @@ para poder comparar:
 ***
      docker-compose up -d --build --scale node=4
 
-     sh run-scenario.sh intensivo/explorative-stress-testing-intensivo.yaml cluster
+     sh run-scenario.sh intensivo/explorative-stress-testing-intensivo-2.yaml cluster
 
 Podemos ver que para un cluster de 3 instancias tuvimos mejoras, ya que todos los requests se procesaron correctamente
 
@@ -271,6 +271,31 @@ Ejecutando el comando:
      sh run-scenario.sh intensivo/explorative-stress-testing-intensivo.yaml cluster
 
 Obtenemos los siguientes resultados:
+
+![img.png](img/intensivo/intesivo-errores.png)
+
+Vemos que el sistema comienza a fallar ni bien arranca el test, con lo cual el límite está más bajo que lo demandado en 
+nuestra prueba. Por supuesto, el uso de CPU en los nodos termina siendo excesivo:
+
+![img_1.png](img/intensivo/cpu-cluster-test-2-1.png)
+
+![img_2.png](img/intensivo/cpu-cluster-test-2-2.png)
+
+![img_3.png](img/intensivo/cpu-cluster-test-2-3.png)
+
+###### Refinamiento test exploratorio de estrés sobre endpoint Intensivo - Más de una instancia.
+
+En esta prueba tomaremos la siguiente configuración:
+
+![img_4.png](img/intensivo/fases-3.png)
+
+***
+     sh run-scenario.sh intensivo/explorative-stress-testing-intensivo-3.yaml cluster
+
+Los resultados obtenidos fueron:
+![img.png](img.png)
+Vemos que el throughput baja significativamente cuando el sistema se satura por completo a los 8 requests.
+
 
 ## Sección 3
 

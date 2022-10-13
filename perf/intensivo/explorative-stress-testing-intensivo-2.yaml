@@ -1,0 +1,38 @@
+config:
+  environments:
+    node:
+      target: 'http://localhost:5555/node'
+      plugins:
+        statsd:
+          host: localhost
+          port: 8125
+          prefix: "artillery-node"
+    cluster:
+      target: 'http://localhost:5555/node/cluster'
+      plugins:
+        statsd:
+          host: localhost
+          port: 8125
+          prefix: "artillery-node"
+  pool: 50 # All HTTP requests from all virtual users will be sent over the same connections
+
+  phases:
+    - duration: 30
+      arrivalCount: 1
+    - duration: 60
+      arrivalCount: 2
+    - duration: 120
+      arrivalCount: 5
+    - pause: 30
+    - duration: 60
+      arrivalCount: 10
+    - duration: 60
+      arrivalCount: 20
+    - duration: 60
+      arrivalCount: 25
+
+scenarios:
+  - name: Root (/)
+    flow:
+      - get:
+          url: '/intensivo'
