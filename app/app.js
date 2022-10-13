@@ -39,3 +39,40 @@ app.get("/intensivo", (req, res) => {
 app.listen(PORT, () => {
     console.log(`[${appId}] Escuchando en ${PORT}`);
 });
+
+
+/// Endpoints para Inscripciones
+
+app.get("/login", (req, res) => {
+    setTimeout(() => {
+        res.status(200).send(`[${appId}] async done`);
+    }, 3000);
+});
+
+app.get("/select-career", (req, res) => {
+    setTimeout(() => {
+        res.status(200).send(`[${appId}] async done`);
+    }, 2000);
+});
+
+app.get("/enrolled-subjects", (req, res) => {
+    setTimeout(() => {
+        res.status(200).send(`[${appId}] async done`);
+    }, 3500);
+});
+
+app.get("/available-subjects", (req, res) => {
+    setTimeout(() => {
+        res.status(200).send(`[${appId}] async done`);
+    }, 4000);
+});
+
+app.get("/enroll-subject", (req, res) => {
+    setTimeout(() => {
+        res.status(200).send(`[${appId}] async done`);
+    }, 2500);
+});
+
+app.get("/logout", (req, res) => {
+    res.status(200).send(`[${appId}] pong\n`);
+});

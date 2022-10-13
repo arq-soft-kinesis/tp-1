@@ -42,7 +42,7 @@ Se ejecuta la siguiente prueba:
 
 Y se obtienen los siguientes valores:
 ![img_10.png](img/ping/throughput-baseline-ping.png)
-([Link a imagen](img/ping/throughput-baseline-ping.png)
+([Link a imagen](img/ping/throughput-baseline-ping.png))
 
 En la imagen podemos ver que el throughput fue del 100%, no perdimos ningún mensaje y el mismo fue creciendo junto con 
 la cantidad de request tal y como esperábamos.
@@ -51,13 +51,13 @@ En cuanto a la latencia podemos ver en el siguiente gráfico que la misma creci�
 se volvió a estabilizar cuando los request tuvieron un arrival rate constante.
 
 ![img_10.png](img/ping/latencia-baseline-ping.png)
-([Link a imagen](img/ping/latencia-baseline-ping.png)
+([Link a imagen](img/ping/latencia-baseline-ping.png))
 
 En cuanto al uso de los recursos del sistema, vemos que el isp de memoria es muy bajo y que el de CPU no supera
 en promedio el 8%.
 
 ![img_11.png](img/ping/resources-baseline-ping.png)
-([Link a imagen](img/ping/resources-baseline-ping.png)
+([Link a imagen](img/ping/resources-baseline-ping.png))
 
 Debido a este aumento de latencia mencionado, nos preguntamos a partir de cuál valor de rate nuestro sistema comenzaría 
 a quebrarse disminuyendo su throughput.
@@ -72,7 +72,7 @@ permita estimar a partir de que valores nuestro sistema comienza a empeorar su p
 La configuración propuesta para tal fin es la siguiente:
 
 ![img_11.png](img/ping/stress-explorative-1.png)
-([Link a imagen](img/ping/stress-explorative-1.png)
+([Link a imagen](img/ping/stress-explorative-1.png))
 
 Con esta configuración se decide arrancar con un arrivalRate igual al máximo propuesto para el baseline, ya que sabemos
 que el sistema pudo soportarlo. Luego, se va a ir incrementando gradualmente la cantidad de virtual users de manera de
@@ -85,7 +85,7 @@ Se ejecuta el siguiente comando:
 Los resultados obtenidos con esta configuración fueron:
 
 ![img_13.png](img/ping/Throughput-ping-stress-1.png)
-([Link a imagen](img/ping/Throughput-ping-stress-1.png)
+([Link a imagen](img/ping/Throughput-ping-stress-1.png))
 
 Se puede ver que en el segundo Ramp Up pasamos el sistema comienza a fallar gracias al gráfico de *Request State*. Esto
 también se ve reflejado si miramos el gráfico de *Throughput* donde el RPS Count iba creciendo junto con la curva de request
@@ -95,18 +95,18 @@ mensajes recibidos son dropeados.
 Estos errores *Server Address in Use*, también se ven reflejados en la Latencia y tiempo de respuesta:
 
 ![img_14.png](img/ping/latency-stress-1.png)
-([Link a imagen](img/ping/latency-stress-1.png)
+([Link a imagen](img/ping/latency-stress-1.png))
 
 
 Fijarse como la latencia al final de la etapa de mayor carga había llegado a su valor maximo. Y, el response time, también
 fue creciendo en esta ultima etapa:
 ![img_15.png](img/ping/response_time_ping1.png)
-([Link a imagen](img/ping/response_time_ping1.png)
+([Link a imagen](img/ping/response_time_ping1.png))
 
 En cuanto a los recursos también podemos ver que el consumo de CPU es significativamente más grande que en el ejemplo 
 baseline que tomamos. Alcanzando valores máximos cercanos al 30% y un 17.8% en promedio:
 ![img_16.png](img/ping/resourse-ping-stress-1.png)
-([Link a imagen](img/ping/resourse-ping-stress-1.png)
+([Link a imagen](img/ping/resourse-ping-stress-1.png))
 
 #### Escenario 2 - Refinamiento de Request threshold para Ping - Una única instancia.
 
@@ -116,7 +116,7 @@ partiremos esa fase en fases de carga progresiva para refinar el límite.
 La configuración de la prueba a usar es la siguiente:
 
 ![img_13.png](img/ping/refinamiento-stress-2.png)
-([Link a imagen](img/ping/refinamiento-stress-2.png)
+([Link a imagen](img/ping/refinamiento-stress-2.png))
 
 Corriendo el comando:
 
@@ -126,7 +126,7 @@ Corriendo el comando:
 Vemos entonces que el sistema comienza a fallar desde el segundo Ramp Up donde el throughput decae significativamente:
 
 ![img.png](img/ping/trhoghput-stress-ping-2.png)
-([Link a imagen](img/ping/trhoghput-stress-ping-2.png)
+([Link a imagen](img/ping/trhoghput-stress-ping-2.png))
 
 Podemos decir entonces que nuestro límite de cargas está dentro del rango arrival de 150 a 200 en un minuto.
 
@@ -143,7 +143,7 @@ Comenzaremos levantando dos réplicas extra y someteremos este cluster al mismo 
 Los resultados obtenidos son:
 
 ![img.png](img/ping/errores-cluster.png)
-([Link a imagen](img/ping/errores-cluster.png)
+([Link a imagen](img/ping/errores-cluster.png))
 
 En este caso la cantidad de request que terminan en error es menor (100 menos), pero no significativamente.
 Sin embargo podríamos ver una mejora en el hecho de que el sistema comenzó a fallar mas tardíamente que en el caso anterior,
@@ -154,7 +154,7 @@ determinar el porqué del mismo exactamente, pero si puede darnos una idea que a
 los nodos, en uno de los momentos máximos de tiempo de demora en responder, el uso de CPU habia llegado casi a su límite:
 
 ![img_2.png](img/ping/latency-resources-cluster.png)
-([Link a imagen](img/ping/latency-resources-cluster.png)
+([Link a imagen](img/ping/latency-resources-cluster.png))
 
 
 ### Endpoint Intensivo
@@ -173,7 +173,7 @@ cada vez mayores de manera progresiva, con el objetivo de encontrar el límite d
 La configuración de la prueba a usar es la siguiente:
 
 ![img.png](img/intensivo/fases-preuba-1.png)
-([Link a imagen](img/intensivo/fases-preuba-1.png)
+([Link a imagen](img/intensivo/fases-preuba-1.png))
 
 Ejecutando el comando:
 ***
@@ -183,12 +183,12 @@ Ejecutando el comando:
 Los resultados obtenidos fueron:
 
 ![img_1.png](img/intensivo/fallas-prueba-1.png)
-([Link a imagen](img/intensivo/fallas-prueba-1.png)
+([Link a imagen](img/intensivo/fallas-prueba-1.png))
 
 Es decir, ya en el primer Ramp Up el sistema comienza a lanzar errores del tipo Timeout:
 
 ![img_2.png](img/intensivo/tipos-de-falla-prueba-1.png)
-([Link a imagen](img/intensivo/tipos-de-falla-prueba-1.png)
+([Link a imagen](img/intensivo/tipos-de-falla-prueba-1.png))
 
 Esto se debe a que la CPU está al máximo en todo momento:
 ![img_3.png](img/intensivo/capu-prueba-1.png)
@@ -197,7 +197,7 @@ Esto se debe a que la CPU está al máximo en todo momento:
 
 Y por lo tanto el sistema comienza a dropear mensajes disminuyendo asi su throughput.
 ![img_4.png](img/intensivo/throughput-prueba-1.png)
-([Link a imagen](img/intensivo/throughput-prueba-1.png)
+([Link a imagen](img/intensivo/throughput-prueba-1.png))
 
 #### Escenario 2 - Test exploratorio de estrés sobre endpoint Intensivo - Una única instancia.
 
@@ -205,7 +205,7 @@ Para entender mejor el límite del sistema en el endpoint intensivo, bajamos la 
 las fases. La configuración de la prueba a usar es la siguiente:
 
 ![img_5.png](img/intensivo/fases-prueba-2.png)
-([Link a imagen](img/intensivo/throughput-prueba-1.png)
+([Link a imagen](img/intensivo/throughput-prueba-1.png))
 
 ***
      sh run-scenario.sh intensivo/explorative-stress-testing-intensivo-2.yaml node
@@ -429,3 +429,55 @@ por el arrival rate y obtenemos 2.5 workers por request.
 
 
 Demora en responder
+=======
+## Sección 3
+
+### Sistema de Inscripciones
+
+Se realizó una simulación de una lista de alumnos inscribiendose a materias bajo los siguientes supuestos:
+ - La cantidad de alumnos por prioridad es de 300.
+ - Los alumnos se anotarán en promedio a 3 materias cada uno.
+ - La simulación corresponde a una franja horaria que le corresponde a una prioridad cualquiera.
+ - La totalidad de los alumnos realizará el ciclo completo (login, inscripción a 3 materias, logout).
+
+Entrando en detalle en el flow del *scenario*, este consiste en una sequencia de requests async:
+ - '/login' con una duración de 3000ms.
+ - '/select-career' con una duración de 2000ms.
+ - '/enrolled-subjects' con una duración de 3500ms.
+ - '/available-subjects' con una duración de 4000ms.
+ - '/enroll-subject' con una duración de 2500ms.
+ - '/logout' con una duración casi instantánea (equivalente a un ping).
+
+La simulación se ejecutó mediante el comando
+***
+    sh run-scenario.sh inscripciones/inscripciones.yaml cluster
+***
+cuyo cluster consiste en 3 nodos. Revisando Graphana podemos ver los siguientes valores obtenidos para
+la duración de la ejecución de la simulación:
+
+![img.png](img/inscripciones/cpu-cluster-1.png)
+([Link a imagen](img/inscripciones/cpu-cluster-1.png))
+![img.png](img/inscripciones/cpu-cluster-2.png)
+([Link a imagen](img/inscripciones/cpu-cluster-2.png))
+![img.png](img/inscripciones/cpu-cluster-3.png)
+([Link a imagen](img/inscripciones/cpu-cluster-3.png))
+
+En los tres nodos podemos apreciar un crecimiento linear inicial, hasta que se estabiliza en un valor
+promedio aproximado de 50% de uso de CPU, lo cual dicho sea de paso nos indica el correcto funcionamiento
+del load balancer.
+
+Por otro lado, podemos analizar el comportamiento de red de la simulación:
+![img.png](img/inscripciones/scenario.png)
+([Link a imagen](img/inscripciones/scenario.png))
+
+Donde podemos apreciar los siguientes resultados:
+ - Tanto el gráfico de *Scenarios launched* como el de *Requests state* presentan un crecimiento linear
+seguido de una meseta moderadamente constante (especialmente en los *Requests state*).
+ - En el gráfico de *Response time* se pueden apreciar 3 picos principales que superan los 7.50s. Se puede
+deducir que corresponden a cuando una gran cantidad de usuarios alcanzo el loop de inscripción (correspondiente
+a los endpoints '/enrolled-subjects', '/available-subjects', y '/enroll-subject'), todos ellos con duraciones
+considerables, seguidos de un valle que corresponde a usuarios que realizaron logout (casi instantáneo).
+ - Durante el primer pico de requests pesadas (aquellas que corresponden al loop de inscripción), se puede
+ver como varias de estas comenzaron a fallar por timeout. Si bien es un porcentaje casi despreciable del total
+(aproximadamente 0.7%), nos indica que podría causar problemas mayores si se aumenta la cantidad de usuarios
+simultaneos.
