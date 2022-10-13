@@ -1,0 +1,39 @@
+config:
+  http:
+    timeout: 60
+  environments:
+    cluster:
+      target: 'http://localhost:5555/node/cluster'
+      plugins:
+        statsd:
+          host: localhost
+          port: 8117
+          prefix: "artillery-node"
+  pool: 50 # All HTTP requests from all virtual users will be sent over the same connections
+
+  phases:
+    - name: Time window start
+      duration: 90
+      arrivalRate: 5
+      rampTo: 300
+    - name: Mass enrollment
+      duration: 90
+      arrivalRate: 300
+
+scenarios:
+  - name: Root (/)
+    flow:
+      - get:
+          url: '/login'
+      - get:
+          url: '/select-career'
+      - loop:
+          - get:
+              url: '/enrolled-subjects'
+          - get:
+              url: '/available-subjects'
+          - get:
+              url: '/enroll-subject'
+        count: 3
+      - get:
+          url: '/logout'
