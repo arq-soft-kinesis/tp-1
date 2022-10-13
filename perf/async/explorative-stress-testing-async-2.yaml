@@ -19,21 +19,25 @@ config:
   phases:
     - name: Plain 1
       duration: 60
-      arrivalRate: 10
+      arrivalRate: 50
     - name: Ramp up 1
       duration: 60
-      arrivalRate: 10
-      rampTo: 30
-    - name: Plain 2
-      duration: 120
-      arrivalRate: 30
-    - name: Ramp up 2
-      duration: 120
-      arrivalRate: 30
-      rampTo: 50
-    - name: Plain 3
-      duration: 120
       arrivalRate: 50
+      rampTo: 100
+    - name: Plain 2
+      duration: 60
+      arrivalRate: 100
+    - name: Ramp up 2
+      duration: 60
+      arrivalRate: 100
+      rampTo: 150
+    - name: Plain 2
+      duration: 60
+      arrivalRate: 150
+    - name: Ramp up 1
+      duration: 60
+      arrivalRate: 150
+      rampTo: 200
 
 scenarios:
   - name: Root (/)

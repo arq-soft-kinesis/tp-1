@@ -16,8 +16,8 @@
 ### Healthcheck básico
 
 En esta primera instancia vamos a tratar de medir la performance de nuestro sistema realizando diferentes pruebas
-de carga sobre el enpoint *ping* con el fin de someter al mismo a diferentes peticiones de requests y de esta manera 
-comprender sus metricas y limites.
+de carga sobre el endpoint *ping* con el fin de someter al mismo a diferentes peticiones de requests y de esta manera 
+comprender sus métricas y límites.
 
 #### Escenario 1. Baseline - Un único nodo - Ping
 
@@ -44,16 +44,16 @@ Y se obtienen los siguientes valores:
 ![img_10.png](img/ping/throughput-baseline-ping.png)
 ([Link a imagen](img/ping/throughput-baseline-ping.png)
 
-En la imagen podemos ver que el throughput fue del 100%, no perdimos ningun mensaje y el mismo fue creciendo junto con 
-la cantidad de request tal y como esperabamos.
+En la imagen podemos ver que el throughput fue del 100%, no perdimos ningún mensaje y el mismo fue creciendo junto con 
+la cantidad de request tal y como esperábamos.
 
 En cuanto a la latencia podemos ver en el siguiente gráfico que la misma creció en la fase de Ramp Up, pero
-se volvio a estabilizar cuando los request tuvieron un arrival rate constante.
+se volvió a estabilizar cuando los request tuvieron un arrival rate constante.
 
 ![img_10.png](img/ping/latencia-baseline-ping.png)
 ([Link a imagen](img/ping/latencia-baseline-ping.png)
 
-En cuanto al uso de los recursos del sistema, vemos que el isp de memoria es muy bajo y que el de CPU no supera en
+En cuanto al uso de los recursos del sistema, vemos que el isp de memoria es muy bajo y que el de CPU no supera
 en promedio el 8%.
 
 ![img_11.png](img/ping/resources-baseline-ping.png)
@@ -74,7 +74,7 @@ La configuración propuesta para tal fin es la siguiente:
 ![img_11.png](img/ping/stress-explorative-1.png)
 ([Link a imagen](img/ping/stress-explorative-1.png)
 
-Con esta configuración se decide arrancar con un arrivalRate igual al maximo propuesto para el baseline, ya que sabemos
+Con esta configuración se decide arrancar con un arrivalRate igual al máximo propuesto para el baseline, ya que sabemos
 que el sistema pudo soportarlo. Luego, se va a ir incrementando gradualmente la cantidad de virtual users de manera de
 que la carga vaya creciendo y podamos ver como esto afecta a las diferentes métricas progresivamente.
 
@@ -92,19 +92,19 @@ también se ve reflejado si miramos el gráfico de *Throughput* donde el RPS Cou
 pero en el segundo que se alcanza el quiebre la curva baja porque el server comienza a arrojar errores y los requests o
 mensajes recibidos son dropeados.
 
-Estos errores *Server Address in Use*, tambien se ven reflejados en la Latencia y tiempo de respuesta:
+Estos errores *Server Address in Use*, también se ven reflejados en la Latencia y tiempo de respuesta:
 
 ![img_14.png](img/ping/latency-stress-1.png)
 ([Link a imagen](img/ping/latency-stress-1.png)
 
 
-Fijarse como la latencia al final de la etapa de mayor carga habia llegado a su valor maximo. Y, el response time, tambien
+Fijarse como la latencia al final de la etapa de mayor carga había llegado a su valor maximo. Y, el response time, también
 fue creciendo en esta ultima etapa:
 ![img_15.png](img/ping/response_time_ping1.png)
 ([Link a imagen](img/ping/response_time_ping1.png)
 
-En cuanto a los recursos tambien podemos ver que el consumo de CPU es significativamente mas grande que en el ejemplo 
-baseline que tomamos. Alcanzando valores maximos cercanos al 30% y un 17.8% en promedio:
+En cuanto a los recursos también podemos ver que el consumo de CPU es significativamente más grande que en el ejemplo 
+baseline que tomamos. Alcanzando valores máximos cercanos al 30% y un 17.8% en promedio:
 ![img_16.png](img/ping/resourse-ping-stress-1.png)
 ([Link a imagen](img/ping/resourse-ping-stress-1.png)
 
@@ -128,12 +128,12 @@ Vemos entonces que el sistema comienza a fallar desde el segundo Ramp Up donde e
 ![img.png](img/ping/trhoghput-stress-ping-2.png)
 ([Link a imagen](img/ping/trhoghput-stress-ping-2.png)
 
-Podemos decir entonces que nuestro límite de cargas esta dentro del rango arrival de 150 a 200 en un minuto.
+Podemos decir entonces que nuestro límite de cargas está dentro del rango arrival de 150 a 200 en un minuto.
 
-Para poder recibir mas requests al mismo tiempo que este limite estimado, vamos a testear el sistema si fuese escalado
+Para poder recibir más requests al mismo tiempo que este límite estimado, vamos a testear el sistema si fuese escalado
 horizontalmente, para ello levantaremos mas replicas del mismo.
 
-#### Escenario 3 - Test de Carga sobre el endpoint Ping - 3 replicas
+#### Escenario 3 - Test de Carga sobre el endpoint Ping - 3 réplicas
 
 Comenzaremos levantando dos réplicas extra y someteremos este cluster al mismo test anterior para poder comparar:
 
@@ -159,7 +159,7 @@ los nodos, en uno de los momentos máximos de tiempo de demora en responder, el 
 
 ### Endpoint Intensivo
 
-Hasta ahora las pruebas realizadas fueron sobre el endpoint ping, pero en un sistema real, el sistma realiza trabajo 
+Hasta ahora las pruebas realizadas fueron sobre el endpoint ping, pero en un sistema real, el sistema realiza trabajo 
 ante cada llamada a un endpoint. Es por eso que se han creado dos endpoints que realizan un trabajo intensivo de CPU y
 otro que hace trabajo de manera asincrónica para simular estos escenarios. 
 
@@ -283,22 +283,149 @@ nuestra prueba. Por supuesto, el uso de CPU en los nodos termina siendo excesivo
 
 ![img_3.png](img/intensivo/cpu-cluster-test-2-3.png)
 
-###### Refinamiento test exploratorio de estrés sobre endpoint Intensivo - Más de una instancia.
+### Endpoint Asincrónico
 
-En esta prueba tomaremos la siguiente configuración:
+Ahora pasaremos a analizar el endpoint asincrónico. Para ello, comenzaremos utilizando el mismo test que utilizamos para
+el caso de endpoint intensivo, asi podremos comparar los resultados.
 
-![img_4.png](img/intensivo/fases-3.png)
+#### Escenario 1 - Test exploratorio baseline sobre endpoint Asincrónico - Una única instancia.
+
+Comenzamos con la siguiente configuración de fases:
+
+
+
+```yaml
+ phases:
+    - name: Plain 1
+      duration: 60
+      arrivalRate: 10
+    - name: Ramp up 1
+      duration: 60
+      arrivalRate: 10
+      rampTo: 30
+    - name: Plain 2
+      duration: 120
+      arrivalRate: 30
+    - name: Ramp up 2
+      duration: 120
+      arrivalRate: 30
+      rampTo: 50
+    - name: Plain 3
+      duration: 120
+      arrivalRate: 50
+```
+
 
 ***
-     sh run-scenario.sh intensivo/explorative-stress-testing-intensivo-3.yaml cluster
-
-Los resultados obtenidos fueron:
-![img.png](img.png)
-Vemos que el throughput baja significativamente cuando el sistema se satura por completo a los 8 requests.
+     sh run-scenario.sh intensivo/explorative-stress-testing-async.yaml node
 
 
+con esta configuración se llegaron a completar todos los request y notamos una diferencia en cuanto al endpoint intensivo 
+donde el uso de CPU habia sido extensivo y en este caso no supera el 8%
+
+![img_1.png](img/async/img_1.png)
+
+En cuanto a la tencia, la misma se mantuvo constante a lo largo de las fases, sin afectar el tiempo de respuesta de lso requests
+
+![img_2.png](img/async/img_2.png)
+
+#### Escenario 2 - Test exploratorio de estrés sobre endpoint Asincrónico - Una única instancia.
+
+Para esta prueba iremos subiendo la cantidad de virtual users de manera gradual para ver como afectan a la performance
+del sistema y poder estimar asi un threshold.
+
+La configuración utilizada es la siguiente:
+
+```yaml 
+    phases:
+    - name: Plain 1
+    duration: 60
+    arrivalRate: 50
+    - name: Ramp up 1
+    duration: 60
+    arrivalRate: 50
+    rampTo: 100
+    - name: Plain 2
+    duration: 60
+    arrivalRate: 100
+    - name: Ramp up 1
+    duration: 60
+    arrivalRate: 100
+    rampTo: 150
+    - name: Plain 2
+    duration: 60
+    arrivalRate: 150
+    - name: Ramp up 1
+    duration: 60
+    arrivalRate: 150
+    rampTo: 200
+```    
+
+Ejecutamos realizando: 
+
+***
+     sh run-scenario.sh intensivo/explorative-stress-testing-async-2.yaml node
 
 
+Los resultados obtenidos fueron los siguientes:
+
+![img_3.png](img/async/img_3.png)
+
+Observamos que a comparación del endpoint intensivo, este puede procesar más requests sin terminar en error, llegando a 
+soportar los requests de la fase de arrivalRate de entre 100 y 150 requests. Podemos asociar esto a que tenemos menor
+consumo de CPU y a que se encolan menos cantidad de requests. En la imagen siguiente
+podemos ver el consumo de CPU y el throughput a trevés del tiempo reflejando lo antes mencionado:
+
+![img_4.png](img/async/img_4.png)
+![img_5.png](img/async/img_5.png)
 
 
+#### Escenario 3 - Test exploratorio de estrés sobre endpoint Asincrónico - Más de una instancia.
 
+Nos interesa estudiar el comportamiento del sistema recibiendo requests asincrónicos cuando se agregan más instancias, 
+para ello procederemos a ejecutar la misma prueba que antes, pero esta vez, con 3 réplicas:
+
+***
+     sh run-scenario.sh intensivo/explorative-stress-testing-async-2.yaml cluster
+
+Los resultados obtenidos fueron los siguientes:
+
+![img_6.png](img/async/img_6.png)
+
+Es decir, comenzamos a tener errores después del segundo Ramp Up. Esto ya había sucedido cuando ejecutamos un único nodo
+solo que el throughput era más bajo (se habían descartado más mensajes):
+
+![img_7.png](img/async/img_7.png)
+
+Podríamos pensar de esta manera que hemos mejorado en cuanto a requests procesados, pero sin embargo el sistema sigue 
+estresado. Para mejorar esto podríamos intentar levantar más réplicas.
+
+## Sección 2
+
+Se procede a realizar diferentes pruebas sobre los endpoints de bbox para analizar así 
+su comportamiento y determinar 
+### Bbox0
+
+![img_1.png](img_1.png)
+
+![img_2.png](img_2.png)
+
+Para estimar el numero de workers dividimos el throughput por la latencia y obtenemos los siguientes valores:
+
+137 / 7.5 = 18.266666666666666
+
+Concluimos entonces que el numero de workers debe ser 19.
+
+
+por el arrival rate y obtenemos 2.5 workers por request.
+
+#### Cantidad de workers (en el caso sincrónico)
+
+### Bbox1
+
+![img_3.png](img_3.png)
+
+![img_4.png](img_4.png)
+
+
+Demora en responder

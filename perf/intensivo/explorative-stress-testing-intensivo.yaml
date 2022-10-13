@@ -1,4 +1,6 @@
 config:
+  http:
+    timeout: 30
   environments:
     node:
       target: 'http://localhost:5555/node'
