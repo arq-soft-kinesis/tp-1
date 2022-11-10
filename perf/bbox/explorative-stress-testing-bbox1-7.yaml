@@ -1,0 +1,44 @@
+config:
+  environments:
+    node:
+      target: 'http://localhost:5555/node'
+      http:
+        timeout: 7200
+      plugins:
+        statsd:
+          host: localhost
+          port: 8125
+          prefix: "artillery-node"
+    cluster:
+      target: 'http://localhost:5555/node/cluster'
+      plugins:
+        statsd:
+          host: localhost
+          port: 8125
+          prefix: "artillery-node"
+  pool: 50 # All HTTP requests from all virtual users will be sent over the same connections
+
+  phases:
+    - name: Count 2000
+      duration: 60
+      arrivalCount: 2000
+    - name: Count 3000
+      duration: 60
+      arrivalCount: 3000
+    - name: Count 4000
+      duration: 60
+      arrivalCount: 4000
+    - name: Count 5000
+      duration: 60
+      arrivalCount: 5000
+    - name: Count 8000
+      duration: 60
+      arrivalCount: 8000
+    - name: Count 10000
+      duration: 60
+      arrivalCount: 10000
+scenarios:
+  - name: Root (/)
+    flow:
+      - get:
+          url: '/bbox/1'

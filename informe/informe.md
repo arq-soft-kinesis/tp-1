@@ -400,15 +400,164 @@ solo que el throughput era más bajo (se habían descartado más mensajes):
 Podríamos pensar de esta manera que hemos mejorado en cuanto a requests procesados, pero sin embargo el sistema sigue 
 estresado. Para mejorar esto podríamos intentar levantar más réplicas.
 
-## Sección 2
 
-Se procede a realizar diferentes pruebas sobre los endpoints de bbox para analizar así 
-su comportamiento y determinar 
+Se procede a realizar diferentes pruebas sobre los endpoints de bbox para analizar así
+su comportamiento y determinar cual de los dos es sincrónico y cual asincrónico.
+
+### Baseline
+para comenzar se realza unaprueba de carga no intensiva sobre ambos reqauests, el test ejecutado es el siguiente:
+***
+     sh run-scenario.sh bbox/explorative-stress-testing-bbox-2.yaml node
+
+Lops resultados obtenidos fueron:
+
+![img_7.png](informe/img/bbox/img_7.png)
+
+Como podemos ver la carga sobre el sistema no estresa al mismo y el consumo de recursos es bajo.
+
+
 ### Bbox0
 
-![img_1.png](img_1.png)
+Con el objetivo de estresar el sistema procedemos a aumentar la cantidad de requests en las pruebas:
+
+***
+     sh run-scenario.sh bbox/explorative-stress-testing-bbox0-3.yaml node
+
+Los resultados obtenidos fueron:
+
+![img_8.png](/img/bbox/img_8.png)
+
+Como podemos ver el sistema sigue sin estresarse con lo cual procedemos nuevamente a aumentar la carga:
+
+***
+     sh run-scenario.sh bbox/explorative-stress-testing-bbox0-4.yaml node
+
+Vemos que  nuevamente el sistema no se satura
+![img_9.png](/img/bbox/img_9.png)
+
+solo tenemos alguno aumentos en el tiempo de respuesta no muy significativos en los tiempos donde se aumenta el arrival time.
+
+Para continuar con el estres del sistema procedemos a ejecutar mas pruebas:
+
+***
+     sh run-scenario.sh bbox/explorative-stress-testing-bbox0-5.yaml node
+
+Para esta prueba podemos ver que los requests comienzan a fallar, artillery marca errores de timeout:
+![img_10.png](/img/bbox/img_10.png)
+
+y la latencia del sistema escala rapidamente pasando de una latencia promedio de 2.5 segundos a 1 minuto al final de la prueba:
+![img_11.png](/img/bbox/img_11.png)
+
+Ahora si bien artillery comenzó a tener errores de timeout, podemos ver que tanto la cpu como la memoria del sistema
+no alcanzaron niveles de estres, por eso volvemos a ejecutar otra pueba incrementando la cantidad de requests y tambien el timeout de artillery
+para ver que  sucede. El valor de timeout en este caso será de 2 minutos teniendo en cuenta la latencia maxima de esta prueba.
+
+***
+     sh run-scenario.sh bbox/explorative-stress-testing-bbox0-6.yaml node
+
+Con estos valores, el consumo de cpu ha aumentado:
+![img_12.png](/img/bbox/img_12.png)
+
+Notamos que la latencia maxima alcanzada se mantiene casi constante a lo largo del ultimo tramo, esto pareciera indicarnos que para valores entre
+1400 y 2000 requests al sistema le hes lo mismo en terminos de que en promedio siempre demorara lo mismo en responder, aproximadamente 1 minuto.
+
+***
+     sh run-scenario.sh bbox/explorative-stress-testing-bbox0-7.yaml node
+
+
+Para este escenario vemos que tenemos muchos menos requests completados y que la cpu ahora a alcanzado el 50%
+![img_13.png](/img/bbox/img_13.png)
+
+Si observamos los logs de nginx y de node vemos que la aplicacion comienza a arrojar ella misma erroes de timeout
+
+![img_14.png](/img/bbox/img_14.png)
+
+De esta forma podemos decir que para valores por arriba de 2000 requests el sistema comienza a saturarse y a no poder responder a todos los requests.
+Manteniendo como latencia maxima 1 minuto.
+![img_15.png](/img/bbox/img_15.png)
+
+### Bbox1
+
+Para este endpoint procedemos a realizar el mismo procedimiento que para bbox0
+
+Arrancamos con una prueba inical de carga no muy intensiva:
+
+![img_16.png](/img/bbox/img_16.png)
+
+***
+     sh run-scenario.sh bbox/baseline-bbox1.yaml node
+
+En este caso vemos que el sistema trabaja sin ningun problema, no tenemos requests que no pueden ser procesados y los recursos no se saturan
+
+![img_17.png](/img/bbox/img_17.png)
+
+la latencia promedio es de 0.9 segundos con momentos donde se alcanza un maximo de 1.3 lo cual es una diferencia menor
+![img_18.png](/img/bbox/img_18.png)
+
+Para estresar el sistema se lo someterá a pruebas similares que a bbox0
+
+***
+     sh run-scenario.sh bbox/explorative-stress-testing-bbox1-4.yaml node
+
+Como no vemos un impacto significativo en los tiempos de respuesta, procedemos a aumentar la carga:
+
+![img_19.png](/img/bbox/img_19.png)
+
+***
+     sh run-scenario.sh bbox/explorative-stress-testing-bbox1-5.yaml node
+
+El sistema sigue sin estresarse:
+
+![img_20.png](/img/bbox/img_20.png)
+
+aumentamos la carga:
+
+***
+     sh run-scenario.sh bbox/explorative-stress-testing-bbox1-6.yaml node
+
+Vemos que el sistema sigue respondiendo a todos los request pero esta vez la CPU alcanza un 20% de uso:
+![img.png](img.png)
+
+Aumentamos una vez mas la carga
+
+***
+     sh run-scenario.sh bbox/explorative-stress-testing-bbox1-7.yaml node
+
+En este caso, a diferencia de Bbox0 el sistema es capaz de soportar mas cantidad de request, fallando recien al final del test
+cuando tenemos un arrival rate de 10000:
 
 ![img_2.png](img_2.png)
+
+Podemos ver como la CPU se encuentra haciendo mucho mas trabajo que en situaciones anteriores, alcanzando el 50% de uso.
+
+En cuanto a la latencia, podemos ver que el sistema tambien responde mejor que al comunicarse con Bbox0 ya que la latencia en este caso
+no supera el segundo:
+![img_3.png](img_3.png)
+
+
+
+### Diagramas de **vista Components & Connectors**
+
+Con el objetivo de visualizar el comportamiento de los componentes y conectores de la aplicacion se realizan los siguientes diagramas:
+
+![](img/Components & Connectors.drawio.png)
+
+
+## Sección 2
+
+### Sincrónico vs Asincrónico
+
+Comparando la latencia de ambos sistemas podemos concluir que BBOX1 se trata de un servicio asincrónico, ya que la latencia para una cantidad de requests constantes se mantiene siempre igual,
+ahora bien para BBOX0 vemos como esta va aumentando a medida que llegan mas requests, el hecho de que los requests se acumulen y la latencia vaya aumentando nos da la pauta de que bbox0 es el 
+servicio sincronico.
+
+
+#### Cantidad de workers (en el caso sincrónico)
+
+### Bbox1
+![img_1.png](/img/bbox/img_1.png)
+
+![img_2.png](/img/bbox/img_2.png)
 
 Para estimar el numero de workers dividimos el throughput por la latencia y obtenemos los siguientes valores:
 
@@ -419,17 +568,38 @@ Concluimos entonces que el numero de workers debe ser 19.
 
 por el arrival rate y obtenemos 2.5 workers por request.
 
-#### Cantidad de workers (en el caso sincrónico)
-
-### Bbox1
-
-![img_3.png](img_3.png)
-
-![img_4.png](img_4.png)
 
 
-Demora en responder
-=======
+### Demora en responder
+
+#### Bbox1
+Para determinar el tiempo de demora en responder se ejectuó el siguiente test:
+
+***
+     sh run-scenario.sh bbox/baseline-bbox1.yaml bbox1
+
+
+Obteniendose los siguiehtes resultados
+
+![img_5.png](/img/bbox/img_5.png)
+
+Sobre la métrica agregada: Latencia  promedio, se puede estimar que el tiempo de respesta es de 964 ms, valor que permanece casi constante en el gráfico.
+
+#### Bbox 0
+
+Para determinar el tiempo de demora en responder se ejectuó el siguiente test:
+
+***
+     sh run-scenario.sh bbox/baseline-bbox0.yaml bbox0
+
+![img_6.png](/img/bbox/img_6.png)
+
+En este caso vemos que el tiempo de respuesta no es tan constante como en Bbox1, lo que es esperable dado que este no es 
+un servicio asincronico, y a medida que se imncrementa la carga sobre el servidor los request se van encolando aumentando asi la latencia.
+Ahora bien, podemos estimar su tiempo de respuesta con los valores promedio graficados cuando la carga es menor, dado que estos sí permanecen casi constantes.
+Este valor es: 964 ms
+
+
 ## Sección 3
 
 ### Sistema de Inscripciones

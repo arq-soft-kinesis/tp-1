@@ -8,7 +8,7 @@ config:
           port: 8125
           prefix: "artillery-node"
     cluster:
-      target: 'http://localhost:5555/cluster'
+      target: 'http://localhost:5555/node/cluster'
       plugins:
         statsd:
           host: localhost
@@ -17,20 +17,22 @@ config:
   pool: 50 # All HTTP requests from all virtual users will be sent over the same connections
 
   phases:
-    - name: Warm up
-      duration: 60
-      arrivalRate: 1
-    - name: Ramp up
-      duration: 120
-      arrivalRate: 5
-      rampTo: 20
-    - name: Plain
-      duration: 180
-      arrivalRate: 2
-
+    - duration: 30
+      arrivalCount: 1
+    - duration: 60
+      arrivalCount: 2
+    - duration: 120
+      arrivalCount: 5
+    - pause: 30
+    - duration: 60
+      arrivalCount: 10
+    - duration: 60
+      arrivalCount: 20
+    - duration: 60
+      arrivalCount: 25
 
 scenarios:
-  - name: Bbox0
+  - name: Root (/)
     flow:
       - get:
           url: '/bbox/0'
